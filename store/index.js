@@ -22,8 +22,14 @@ export const mutations = {
         state.listPhone = payload
     },
     savePhone(state, payload){
-        console.log(payload);
-    }  
+        state.listPhone.push(payload)
+    },   
+    editPhone(state, payload){
+        console.log(payload)
+    },
+    removePhone(state, payload){
+        state.listPhone = state.listPhone.filter(x => x.id != payload)
+    }
 }
 
 export const actions = {
@@ -46,12 +52,40 @@ export const actions = {
         }
     },
     async insertPhone({commit}, phone){
+        const data = {
+            phone: phone
+        }
         try {
-            await this.$axios.$get('phone').then((response) => {
+            await this.$axios.$post('phone', data).then((response) => {
                 commit('savePhone', response)
             })
         } catch (error) {
             console.log(error)
         }
-    }
+    },
+    async editSetPhone({commit}, phone){
+        const data = {
+            phone: phone
+        }
+        try {
+            await this.$axios.$put(`phone/${phone}`, data).then((response) => {
+                commit('editPhone', phone)
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    },
+    async removePhone({commit}, phone){
+        const data = {
+            phone: phone
+        }
+        try {
+            await this.$axios.$delete(`phone/${phone}`, data).then((response) => {
+                commit('removePhone', phone)
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    },
+
 }
