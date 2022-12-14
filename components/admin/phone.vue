@@ -64,6 +64,9 @@
                     if(!this.phoneIslist(this.phone)){
                         this.insertPhone(this.phone);
                         this.phone = null
+                        this.$store.dispatch("snackbars/setSnackbars", {text:'Registro salvo', color:'success'})
+                    } else {
+                        this.$store.dispatch("snackbars/setSnackbars", {text:'Registro já cadastrado', color:'error'})
                     }
                 }
             },

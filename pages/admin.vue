@@ -14,7 +14,7 @@
                 color="primary"
                 dark
                 >
-                <v-toolbar-title>CRUD</v-toolbar-title>
+                <v-toolbar-title>Cadstros e Listas</v-toolbar-title>
                 </v-toolbar>
                 <v-tabs 
                     v-model="tabs"
@@ -25,9 +25,9 @@
                         :key="index"
                     >
                         <v-icon left>
-                        mdi-account
+                       {{item.icon}}
                         </v-icon>
-                        {{item}}
+                        {{item.name}}
                     </v-tab>
                     <v-tab-item>
                         <v-card-text>
@@ -52,7 +52,12 @@
         data(){
             return{
                 tabs: null,
-                nameTabs: ['Telefones', 'Endereços', 'Usuários', 'Setores', 'Gerências']
+                nameTabs: [
+                    {icon: 'mdi-phone', name: 'Telefones'},
+                    {icon: 'mdi-map-marker', name: 'Endereços'},
+                    {icon: 'mdi-account', name: 'Usuários'},
+                    {icon: 'mdi-home', name: 'Gerências'},
+                ]
             }
         }
     }

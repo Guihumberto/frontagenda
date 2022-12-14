@@ -1,8 +1,8 @@
 <template>
     <div class="text-center py-5">
       <v-pagination
-        v-model="page"
-        :length="6"
+        v-model="pagination.page"
+        :length="totalPages"
       ></v-pagination>
     </div>
   </template>
@@ -13,5 +13,9 @@
         page: 1,
       }
     },
+    props:{
+      pagination: Object,
+      totalPages: false
+    }
   }
 </script>

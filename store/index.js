@@ -25,7 +25,9 @@ export const mutations = {
         state.listPhone.push(payload)
     },   
     editPhone(state, payload){
-        console.log(payload)
+        const x = state.listPhone.map(item => item.id == payload.id ? payload : item)
+        state.listPhone = x
+
     },
     removePhone(state, payload){
         state.listPhone = state.listPhone.filter(x => x.id != payload)
@@ -64,11 +66,8 @@ export const actions = {
         }
     },
     async editSetPhone({commit}, phone){
-        const data = {
-            phone: phone
-        }
         try {
-            await this.$axios.$put(`phone/${phone}`, data).then((response) => {
+            await this.$axios.$put(`phone/${phone.id}`, phone).then((response) => {
                 commit('editPhone', phone)
             })
         } catch (error) {
