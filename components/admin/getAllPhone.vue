@@ -24,114 +24,112 @@
           group
         >
           <template v-for="(item, index) in listSearch.list">
-            <!-- edit mode -->
-            <v-list-item 
-              :key="index + item.phone" 
-              v-if="editMode == item.id"
-            >
-              <v-list-item-icon class="pt-3">
-                <v-icon>mdi-circle-edit-outline</v-icon>
-              </v-list-item-icon>
-              <v-form @submit.prevent="modifyList(item)" ref="form">
+            <div :key="index">
+              <!-- edit mode -->
+              <v-list-item  
+                v-if="editMode == item.id"
+              >
+                <v-list-item-icon class="pt-3">
+                  <v-icon>mdi-circle-edit-outline</v-icon>
+                </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title class="pt-3">
+                     <v-text-field
+                     v-model="item.phone"
+                     dense outlined
+                     autofocus
+                     style="max-width:150px"
+                     v-mask="'(##) ####-####'"
+                     :rules="[rules.required, rules.mincaracter]"
+                     ></v-text-field>
+                    </v-list-item-title>
+                  </v-list-item-content>
+                  <v-list-item-action>
+                    <div class="d-flex">
+                      <v-btn
+                        outlined
+                       @click="modifyList(item)"
+                      >Editar</v-btn>
+                      <v-btn
+                        class="ml-1"
+                        text
+                        @click="editMode = null"
+                      >Cancelar</v-btn>
+                    </div>
+                  </v-list-item-action>  
+              </v-list-item>
+              <!-- delete mode -->
+              <v-list-item  v-else-if="deleteMode == item.id">
+                <v-list-item-icon>
+                  <v-icon color="error">mdi-alert-circle-outline</v-icon>
+                </v-list-item-icon>
                 <v-list-item-content>
-                  <v-list-item-title class="pt-3">
-                   <v-text-field
-                   v-model="item.phone"
-                   dense outlined
-                   autofocus
-                   style="max-width:150px"
-                   v-mask="'(##) ####-####'"
-                   :rules="[rules.required, rules.mincaracter]"
-                   ></v-text-field>
+                  <v-list-item-title class="error--text">
+                    Tem certeza que deseja apagar o ramal <strong>{{item.phone}}</strong>?
                   </v-list-item-title>
+                  <v-list-item-subtitle>
+                    A operação não poderá ser desfeita.
+                  </v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-action>
                   <div class="d-flex">
                     <v-btn
                       outlined
-                      type="submit"
-                    >Editar</v-btn>
+                      color="error"
+                      @click="modifyList(item)"
+                    >Sim</v-btn>
                     <v-btn
                       class="ml-1"
                       text
-                      @click="editMode = null"
+                      @click="deleteMode = null"
                     >Cancelar</v-btn>
                   </div>
-                </v-list-item-action>  
-              </v-form>
-            </v-list-item>
-            <!-- delete mode -->
-            <v-list-item :key="index + item.phone" v-else-if="deleteMode == item.id">
-              <v-list-item-icon>
-                <v-icon color="error">mdi-alert-circle-outline</v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title class="error--text">
-                  Tem certeza que deseja apagar o ramal <strong>{{item.phone}}</strong>?
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  A operação não poderá ser desfeita.
-                </v-list-item-subtitle>
-              </v-list-item-content>
-              <v-list-item-action>
-                <div class="d-flex">
-                  <v-btn
-                    outlined
-                    color="error"
-                    @click="modifyList(item)"
-                  >Sim</v-btn>
-                  <v-btn
-                    class="ml-1"
-                    text
-                    @click="deleteMode = null"
-                  >Cancelar</v-btn>
-                </div>
-              </v-list-item-action>
-            </v-list-item>
-            <!-- show mode -->
-            <v-list-item :key="index + item.phone" v-else>
-              <template v-slot:default="{ active }">
-                <v-list-item-content>
-                  <v-list-item-subtitle v-text="item.id"></v-list-item-subtitle>
-                  <v-list-item-title v-text="item.phone"></v-list-item-title>
-                </v-list-item-content>
-                <v-list-item-action>
-                  <v-list-item-action-text>Ações</v-list-item-action-text>
-                  <div class="d-flex">
-                    <v-tooltip bottom>
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                          v-bind="attrs"
-                          v-on="on"
-                          icon
-                          @click="edit(item.id)"
-                        >
-                          <v-icon>mdi-circle-edit-outline</v-icon>
-                        </v-btn>
-                      </template>
-                      <span>Editar</span>
-                    </v-tooltip>
-                    <v-tooltip bottom>
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                          v-bind="attrs"
-                          v-on="on"
-                          icon
-                          @click="remove(item.id)"
-                        >
-                          <v-icon>mdi-delete</v-icon>
-                        </v-btn>
-                      </template>
-                      <span>Apagar</span>
-                  </v-tooltip>
-                  </div>
                 </v-list-item-action>
-              </template>
-            </v-list-item>
-            <v-divider
-              v-if="index < list.length - 1"
-              :key="index"
-            ></v-divider>
+              </v-list-item>
+              <!-- show mode -->
+              <v-list-item  v-else>
+                <template v-slot:default="{ active }">
+                  <v-list-item-content>
+                    <v-list-item-subtitle v-text="item.id"></v-list-item-subtitle>
+                    <v-list-item-title v-text="item.phone"></v-list-item-title>
+                  </v-list-item-content>
+                  <v-list-item-action>
+                    <v-list-item-action-text>Ações</v-list-item-action-text>
+                    <div class="d-flex">
+                      <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-btn
+                            v-bind="attrs"
+                            v-on="on"
+                            icon
+                            @click="edit(item.id)"
+                          >
+                            <v-icon>mdi-circle-edit-outline</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>Editar</span>
+                      </v-tooltip>
+                      <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-btn
+                            v-bind="attrs"
+                            v-on="on"
+                            icon
+                            @click="remove(item.id)"
+                          >
+                            <v-icon>mdi-delete</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>Apagar</span>
+                    </v-tooltip>
+                    </div>
+                  </v-list-item-action>
+                </template>
+              </v-list-item>
+              <v-divider
+                v-if="index < list.length - 1"
+              ></v-divider>
+            </div>
           </template>
         </v-slide-x-transition>
       </v-list-item-group>
@@ -164,6 +162,7 @@ export default {
       listSearch(){
         let list = this.list
         if(this.search){
+            this.pageOne()
            //retirar acentuação
            let search = this.search.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
               //retirar caracteres especiais
@@ -197,7 +196,7 @@ export default {
   methods:{
       ...mapActions(['cargaPhone', 'editSetPhone', 'removePhone']),
       order(a, b){
-        return b.id -  a.id
+        return b.id - a.id
       },
       edit(item){
         this.deleteMode = null
@@ -206,6 +205,9 @@ export default {
       remove(item){
         this.editMode = null
         this.deleteMode = item
+      },
+      pageOne(){
+        this.pagination.page = 1
       },
       modifyList(item){
         if(this.editMode){

@@ -13,7 +13,7 @@
         <v-spacer></v-spacer>
         <v-btn 
             icon
-            @click="$emit('noShowContact')"
+            @click="$emit('noShowContact'), alter()"
         >
             <v-icon>mdi-close</v-icon>
         </v-btn>
@@ -97,6 +97,7 @@
 </template>
 
 <script>
+    import { mapActions } from 'vuex';
     export default {
         data(){
             return{
@@ -105,6 +106,14 @@
         },
         props:{
             employee:Object
+        },
+        methods:{
+            ...mapActions(['alterSizeAgenda']),
+            alter(){
+                setTimeout(() => {
+                    this.alterSizeAgenda(100)
+                }, 500);
+            }
         }
     }
 </script>

@@ -1,7 +1,7 @@
 <template>
   <v-card
     class="mt-5 mx-auto"
-    :min-width="`${sizeAgenda}%`"
+    :min-width="`${$store.getters.readSizeAgenda}%`"
     outlined
   >
     <v-toolbar
@@ -14,7 +14,7 @@
             class="mt-5"
             dense append-icon="mdi-magnify"
             rounded outlined filled
-            autofocus="true"
+            :autofocus="true"
             v-if="showSearchField"
             v-model="search"
             clearable
@@ -36,7 +36,7 @@
         <v-subheader
         >Contato</v-subheader>
         <v-list-item-group>
-          <template v-for="(item, index) in contactList">
+          <template v-for="(item, index) in contactList.list">
             <v-list-item
               @click="contatoRight(item)"
               :key="index"
@@ -86,37 +86,48 @@
         </v-list-item-content>
       </v-list-item>
     </v-list>
-      <layoutComponent-pagination />
+    <layoutComponent-pagination :pagination="pagination" :totalPages="contactList.totalPages" />
   </v-card>
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+
 export default {
 data: () => ({
   showSearchField: false,
   search: null,
   employee: null,
-  sizeAgenda: 100,
+  pagination:{
+      page: 1,
+      perPage: 10,
+  },
 }),
 props:{
   showContato: Boolean
 },
 computed:{
   contactList(){
+    let list = this.items
+
     if(this.showSearchField && this.search){
+      this.pageOne()
       let search = this.search.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
       let exp = new RegExp(search.trim().replace(/[\[\]!'.@><|//\\&*()_+=]/g, ""), "i");
-      let filtro = this.items.filter(project => exp.test(
+      let filtro = list.filter(project => exp.test(
               project.name.normalize('NFD').replace(/[\u0300-\u036f]/g, "") ) 
               || exp.test( project.phone.phone.replace('.', '') ) 
               || exp.test( project.sector.name.replace('.', '') ))
+      list = filtro
+    } 
+      let page = this.pagination.page - 1
+      let start = page * this.pagination.perPage
+      let end = start + this.pagination.perPage
 
-      return filtro.length
-      ? filtro
-      : false
-    } else {
-      return this.items
-    }
+      return {
+        list: list.slice(start, end).sort(this.order),
+        totalPages: Math.ceil(list.length/this.pagination.perPage),
+      }
   },
   magnifyIcon(){
       return this.showSearchField
@@ -129,10 +140,17 @@ computed:{
   }
 },
 methods:{
+  ...mapActions(['alterSizeAgenda']),
   contatoRight(item){
     this.employee = item
-    this.sizeAgenda = 65,
+    this.alterSizeAgenda(65)
     this.$emit('showContactBtn', this.employee)
+  },
+  order(a, b){
+    return b.name -  a.name
+  },
+  pageOne(){
+    this.pagination.page = 1
   },
 },
 }

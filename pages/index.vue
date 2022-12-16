@@ -7,11 +7,13 @@
       <v-icon large>mdi-phone</v-icon>
       Agenda SEFAZ-MA
     </h1>
-    <div class="d-flex">   
-        <agenda-listAgenda 
-          @showContactBtn="showContact($event)" 
-          :showContato="showContato"
-        />
+    <div class="d-flex">  
+        <v-expand-x-transition>
+          <agenda-listAgenda 
+            @showContactBtn="showContact($event)" 
+            :showContato="showContato"
+          />
+        </v-expand-x-transition> 
         <v-expand-x-transition>
           <agenda-contato 
             v-if="showContato" 

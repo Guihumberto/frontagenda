@@ -6,7 +6,7 @@
     >
     <v-text-field
       label="Busca"
-      placeholder="Digite um endereço..."
+      placeholder="digite um número de ramal..."
       v-model="search"
       dense outlined
       append-icon="mdi-magnify"
@@ -26,7 +26,7 @@
             <template v-for="(item, index) in listSearch.list">
               <div :key="index">
                 <!-- edit mode -->
-                <v-list-item  
+                <v-list-item 
                   v-if="editMode == item.id"
                 >
                   <v-list-item-icon class="pt-3">
@@ -36,9 +36,10 @@
                     <v-list-item-content>
                       <v-list-item-title class="pt-3">
                        <v-text-field
-                       v-model="item.adress"
+                       v-model="item.name"
                        dense outlined
                        autofocus
+                       style="max-width:150px"
                        :rules="[rules.required, rules.mincaracter]"
                        ></v-text-field>
                       </v-list-item-title>
@@ -65,7 +66,7 @@
                   </v-list-item-icon>
                   <v-list-item-content>
                     <v-list-item-title class="error--text">
-                      Tem certeza que deseja apagar o registro <strong>{{item.adress}}</strong>?
+                      Tem certeza que deseja apagar o registro <strong>{{item.name}}</strong>?
                     </v-list-item-title>
                     <v-list-item-subtitle>
                       A operação não poderá ser desfeita.
@@ -90,8 +91,8 @@
                 <v-list-item v-else>
                   <template v-slot:default="{ active }">
                     <v-list-item-content>
-                      <v-list-item-title v-text="item.adress"></v-list-item-title>
-                      <v-list-item-subtitle>{{item.city}} - {{item.type}} - {{item.floor}}</v-list-item-subtitle>
+                      <v-list-item-title v-text="item.name"></v-list-item-title>
+                      <v-list-item-subtitle v-if="item.localization">{{item.localization.type}} - {{item.localization.city}}</v-list-item-subtitle>
                     </v-list-item-content>
                     <v-list-item-action>
                       <v-list-item-action-text>Ações</v-list-item-action-text>
@@ -148,7 +149,7 @@
       search: null,
       rules:{
           required: (value) => !!value || "Campo obrigatório",
-          mincaracter: (v) => (v||'').length >= 5 || "Mínimo de 05 caracteres",
+          mincaracter: (v) => (v||'').length >= 10 || "Mínimo de 10 caracteres",
       },
       pagination:{
           page: 1,
@@ -157,7 +158,7 @@
     }),
     computed:{
         list(){
-            return this.$store.getters.readLocal.sort(this.order)
+            return this.$store.getters.readSector.sort(this.order)
         },
         listSearch(){
           let list = this.list
@@ -168,7 +169,7 @@
                 //retirar caracteres especiais
               let exp = new RegExp(search.trim().replace(/[\[\]!'.@><|//\\&*()_+=]/g, ""), "i")
               //fazer o filtro
-              let filtro = list.filter(project => exp.test(project.adress.normalize('NFD')
+              let filtro = list.filter(project => exp.test(project.name.normalize('NFD')
                 .replace(/[\u0300-\u036f]/g, "") ) )
                 list = filtro
           }
@@ -194,7 +195,7 @@
         }
     },
     methods:{
-        ...mapActions(['cargaLocal', 'editSetLocal', 'removeLocal']),
+        ...mapActions(['cargaSector', 'editSetSector', 'removeSector']),
         order(a, b){
           return b.id -  a.id
         },
@@ -211,19 +212,19 @@
         },
         modifyList(item){
           if(this.editMode){
-              this.editSetLocal(item)
+              this.editSetSector(item)
               this.editMode = null
               this.$store.dispatch("snackbars/setSnackbars", {text:'Registro editado', color:'success'})
           }
           if(this.deleteMode){
-            this.removeLocal(item.id)
+            this.removeSector(item.id)
             this.deleteMode = null
             this.$store.dispatch("snackbars/setSnackbars", {text:'Registro removido', color:'error'})
           }
         }
     },
     created(){
-        this.cargaLocal()
+        this.cargaSector()
     }
   }
   </script>

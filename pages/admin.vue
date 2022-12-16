@@ -15,10 +15,11 @@
                 dark
                 >
                 <v-toolbar-title>Cadstros e Listas</v-toolbar-title>
-                </v-toolbar>
+            </v-toolbar>
                 <v-tabs 
                     v-model="tabs"
                     centered
+                    
                 >
                     <v-tab
                         v-for="(item, index) in nameTabs"
@@ -29,16 +30,29 @@
                         </v-icon>
                         {{item.name}}
                     </v-tab>
-                    <v-tab-item>
+
+                    <v-tab-item id="1">
                         <v-card-text>
                             <admin-phone />
                             <admin-getAllPhone />
                         </v-card-text>
                     </v-tab-item>
-                    <v-tab-item>
+                    <v-tab-item id="2">
                         <v-card-text>
-                            <admin-localization />
-                            <admin-getAllLocalization />
+                            <!-- <admin-localization /> -->
+                            <!-- <admin-getAllLocalization /> -->
+                        </v-card-text>
+                    </v-tab-item>
+                    <v-tab-item id="3">
+                        <v-card-text>
+                            <!-- <admin-employee /> -->
+                            <!-- <admin-getAllEmployee /> -->
+                        </v-card-text>
+                    </v-tab-item>
+                    <v-tab-item id="4">
+                        <v-card-text>
+                            <!-- <admin-sector /> -->
+                            <!-- <admin-getAllSector /> -->
                         </v-card-text>
                     </v-tab-item>
                 </v-tabs>
@@ -51,13 +65,24 @@
     export default {
         data(){
             return{
-                tabs: null,
+                tabs: 0,
                 nameTabs: [
                     {icon: 'mdi-phone', name: 'Telefones'},
                     {icon: 'mdi-map-marker', name: 'Endereços'},
                     {icon: 'mdi-account', name: 'Usuários'},
                     {icon: 'mdi-home', name: 'Gerências'},
                 ]
+            }
+        },
+        watch:{
+            tabs(newTabs, oldTabs){
+                this.alter(newTabs)
+            }
+        },
+        methods:{
+            alter(item){
+                console.log("chamou", item);
+                this.$router.push( `/admin?id=${item}` )
             }
         }
     }
