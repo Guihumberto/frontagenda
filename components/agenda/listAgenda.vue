@@ -91,67 +91,84 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { set } from 'vue';
+    import { mapActions } from 'vuex';
 
-export default {
-data: () => ({
-  showSearchField: false,
-  search: null,
-  employee: null,
-  pagination:{
-      page: 1,
-      perPage: 10,
-  },
-}),
-props:{
-  showContato: Boolean
-},
-computed:{
-  contactList(){
-    let list = this.items
-
-    if(this.showSearchField && this.search){
-      this.pageOne()
-      let search = this.search.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-      let exp = new RegExp(search.trim().replace(/[\[\]!'.@><|//\\&*()_+=]/g, ""), "i");
-      let filtro = list.filter(project => exp.test(
-              project.name.normalize('NFD').replace(/[\u0300-\u036f]/g, "") ) 
-              || exp.test( project.phone.phone.replace('.', '') ) 
-              || exp.test( project.sector.name.replace('.', '') ))
-      list = filtro
-    } 
-      let page = this.pagination.page - 1
-      let start = page * this.pagination.perPage
-      let end = start + this.pagination.perPage
-
-      return {
-        list: list.slice(start, end).sort(this.order),
-        totalPages: Math.ceil(list.length/this.pagination.perPage),
+    export default {
+    data: () => ({
+      showSearchField: false,
+      search: null,
+      employee: null,
+      pagination:{
+          page: 1,
+          perPage: 10,
+      },
+    }),
+    watch:{
+      employee(newEmployee, oldEmployee){
+        this.$router.push(`/?id=${newEmployee.id}`)
       }
-  },
-  magnifyIcon(){
-      return this.showSearchField
-      ? 'mdi-close' 
-      : 'mdi-magnify'
-  },
-  items(){
-    const lista = this.$store.getters.readAgenda
-    return lista
-  }
-},
-methods:{
-  ...mapActions(['alterSizeAgenda']),
-  contatoRight(item){
-    this.employee = item
-    this.alterSizeAgenda(65)
-    this.$emit('showContactBtn', this.employee)
-  },
-  order(a, b){
-    return b.name -  a.name
-  },
-  pageOne(){
-    this.pagination.page = 1
-  },
-},
+    },
+    props:{
+      showContato: Boolean
+    },
+    computed:{
+      contactList(){
+        let list = this.items
+
+        if(this.showSearchField && this.search){
+          this.pageOne()
+          let search = this.search.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+          let exp = new RegExp(search.trim().replace(/[\[\]!'.@><|//\\&*()_+=]/g, ""), "i");
+          let filtro = list.filter(project => exp.test(
+                  project.name.normalize('NFD').replace(/[\u0300-\u036f]/g, "") ) 
+                  || exp.test( project.phone.phone.replace('.', '') ) 
+                  || exp.test( project.sector.name.replace('.', '') ))
+          list = filtro
+        } 
+          let page = this.pagination.page - 1
+          let start = page * this.pagination.perPage
+          let end = start + this.pagination.perPage
+
+          return {
+            list: list.slice(start, end).sort(this.order),
+            totalPages: Math.ceil(list.length/this.pagination.perPage),
+          }
+      },
+      magnifyIcon(){
+          return this.showSearchField
+          ? 'mdi-close' 
+          : 'mdi-magnify'
+      },
+      items(){
+        const lista = this.$store.getters.readAgenda
+        return lista
+      },
+    },
+    methods:{
+      ...mapActions(['alterSizeAgenda']),
+      contatoRight(item){
+        this.employee = item
+        this.alterSizeAgenda(65)
+        this.$emit('showContactBtn', this.employee)
+      },
+      order(a, b){
+        return b.name -  a.name
+      },
+      pageOne(){
+        this.pagination.page = 1
+      },
+      selectAuto(){
+        if(this.$route.query.id){
+          this.employee = this.items.find(x => x.id == 9)
+          this.contatoRight(this.employee);
+        }
+      }
+    },
+    created(){
+      setTimeout(() => {
+        this.selectAuto()
+      }, 1000)
+    }
 }
 </script>
